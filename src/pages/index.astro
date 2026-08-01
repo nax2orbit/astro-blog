@@ -16,6 +16,9 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 			<div class="hero-image">
 				<img src="/header.jpg" alt="宇宙の写真が飾られたコルクボード" />
 			</div>
+			<a class="github-profile" href="https://github.com/nax2orbit" target="_blank" rel="noreferrer">
+				<img src="https://github.com/nax2orbit.png" alt="nax2orbit のGitHubプロフィール写真" />
+			</a>
 			<h1>🧑‍🚀 Hello, Astronaut!</h1>
 			<p>
 				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
@@ -70,5 +73,19 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 		object-fit: cover;
 		object-position: center 42%;
 		border-radius: 13px;
+	}
+	.github-profile {
+		display: block;
+		width: 120px;
+		height: 120px;
+		margin: 0 0 1rem auto;
+		overflow: hidden;
+		border-radius: 50%;
+	}
+	.github-profile img {
+		display: block;
+		width: 120px;
+		height: 120px;
+		object-fit: cover;
 	}
 </style>
