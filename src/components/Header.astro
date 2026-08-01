@@ -30,6 +30,9 @@ import HeaderLink from './HeaderLink.astro';
 					></path></svg
 				>
 			</a> -->
+			<button class="theme-toggle" type="button" aria-pressed="false" aria-label="ダークモードに切り替え">
+				<span aria-hidden="true">☾</span>
+			</button>
 			<a href="https://github.com/nax2orbit" target="_blank">
 				<span class="sr-only">Go to Astro's GitHub repo</span>
 				<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32"
@@ -53,6 +56,9 @@ import HeaderLink from './HeaderLink.astro';
 		);
 		box-shadow: 0 2px 8px rgba(var(--black), 5%);
 	}
+	:global(:root[data-theme='dark']) header {
+		background: linear-gradient(to right, #21182e, #181421);
+	}
 	h2 {
 		margin: 0;
 		font-size: 1em;
@@ -69,7 +75,7 @@ import HeaderLink from './HeaderLink.astro';
 	}
 	nav a {
 		padding: 0.6em 0.5em;
-		color: var(--black);
+		color: rgb(var(--black));
 		border-bottom: 4px solid transparent;
 		text-decoration: none;
 	}
@@ -85,9 +91,61 @@ import HeaderLink from './HeaderLink.astro';
 	.social-links a {
 		display: flex;
 	}
+	.theme-toggle {
+		display: grid;
+		position: relative;
+		top: 6px;
+		place-items: center;
+		width: 32px;
+		height: 32px;
+		margin: 0.35em 0.5em;
+		padding: 0;
+		border: 1px solid rgb(var(--gray));
+		border-radius: 50%;
+		background: transparent;
+		color: rgb(var(--black));
+		font: inherit;
+		font-size: 1.2rem;
+		line-height: 1;
+		cursor: pointer;
+	}
+	.theme-toggle:hover {
+		background: rgb(var(--gray-light));
+	}
+	.theme-toggle span {
+		display: block;
+		line-height: 1;
+		transform: translateY(+1px);
+	}
+	.theme-toggle:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
 	@media (max-width: 720px) {
 		.social-links {
 			display: none;
 		}
 	}
 </style>
+
+<script>
+	const button = document.querySelector<HTMLButtonElement>('.theme-toggle');
+
+	function updateThemeToggle() {
+		if (!button) return;
+		const isDark = document.documentElement.dataset.theme === 'dark';
+		button.setAttribute('aria-pressed', String(isDark));
+		button.setAttribute('aria-label', isDark ? '明るいモードに切り替え' : 'ダークモードに切り替え');
+		button.querySelector('span')!.textContent = isDark ? '☀' : '☾';
+	}
+
+	updateThemeToggle();
+	button?.addEventListener('click', () => {
+		const isDark = document.documentElement.dataset.theme === 'dark';
+		document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
+		try {
+			localStorage.setItem('theme', isDark ? 'light' : 'dark');
+		} catch {}
+		updateThemeToggle();
+	});
+</script>

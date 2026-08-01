@@ -16,6 +16,16 @@
 		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
 		0 16px 32px rgba(var(--gray), 33%);
 }
+:root[data-theme='dark'] {
+	color-scheme: dark;
+	--accent: rgb(167, 69, 240);
+	--accent-dark: rgb(199, 142, 255);
+	--black: 247, 244, 255;
+	--gray: 181, 171, 203;
+	--gray-light: 57, 47, 72;
+	--gray-dark: 232, 226, 242;
+	--gray-gradient: rgba(57, 47, 72, 50%), #1c1826;
+}
 body {
 	font-family: var(--font-atkinson);
 	margin: 0;
@@ -29,6 +39,9 @@ body {
 	color: rgb(var(--gray-dark));
 	font-size: 20px;
 	line-height: 1.7;
+}
+:root[data-theme='dark'] body {
+	background: #1c1826;
 }
 main {
 	width: 720px;
