@@ -13,6 +13,9 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 	<body>
 		<Header />
 		<main>
+			<div class="hero-image">
+				<img src="/header.jpg" alt="宇宙の写真が飾られたコルクボード" />
+			</div>
 			<h1>🧑‍🚀 Hello, Astronaut!</h1>
 			<p>
 				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
@@ -47,3 +50,22 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 		<Footer />
 	</body>
 </html>
+
+<style>
+	main {
+		padding-top:5;
+	}
+	.hero-image {
+		margin-bottom: 2rem;
+		padding: 3px;
+		border-radius: 16px;
+	}
+	.hero-image img {
+		display: block;
+		width: 100%;
+		height: clamp(260px, 18vw, 280px);
+		object-fit: cover;
+		object-position: center 42%;
+		border-radius: 13px;
+	}
+</style>
