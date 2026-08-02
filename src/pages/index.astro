@@ -41,6 +41,11 @@ const latestPosts = (await getCollection('notes'))
 							<div class="post-card-content">
 								<h3>{post.data.title}</h3>
 								<p>{post.data.description}</p>
+								{post.data.tags.length > 0 && (
+									<div class="tags" aria-label="Tags">
+										{post.data.tags.map((tag) => <span>#{tag}</span>)}
+									</div>
+								)}
 								<span><FormattedDate date={post.data.pubDate} /></span>
 							</div>
 						</a>
@@ -176,6 +181,19 @@ const latestPosts = (await getCollection('notes'))
 	.post-card span {
 		color: rgb(var(--gray));
 		font-size: 0.75rem;
+	}
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+		margin-bottom: 0.55rem;
+	}
+	.tags span {
+		padding: 0.1rem 0.45rem;
+		border-radius: 999px;
+		background: rgba(122, 69, 246, 0.1);
+		color: rgb(122, 69, 246);
+		font-size: 0.68rem;
 	}
 	@media (max-width: 720px) {
 		.post-grid {
