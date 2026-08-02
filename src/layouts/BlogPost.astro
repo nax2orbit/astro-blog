@@ -30,24 +30,27 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [] } = Astro
 				box-shadow: var(--box-shadow);
 			}
 			.content-area {
-				display: grid;
-				grid-template-columns: minmax(0, 720px) 200px;
-				gap: 2rem;
-				align-items: start;
-				max-width: 960px;
+				width: min(1200px, calc(100% - 2em));
+				max-width: 1200px;
 				margin: auto;
 			}
 			.prose {
-				width: auto;
+				width: 720px;
 				max-width: calc(100% - 2em);
-				margin: 0;
+				margin: auto;
 				padding: 1em;
 				color: rgb(var(--gray-dark));
 			}
+			.article-layout {
+				display: block;
+			}
+			.article-body {
+				min-width: 0;
+			}
 			.toc {
-				position: sticky;
-				top: 1.5rem;
-				margin-top: 2rem;
+				position: static;
+				width: 100%;
+				margin: 0 0 2rem;
 				padding: 1rem;
 				border-left: 1px solid rgb(var(--gray-light));
 			}
@@ -124,6 +127,11 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [] } = Astro
 			@media (max-width: 900px) {
 				.content-area {
 					display: block;
+					width: 100%;
+				}
+				.prose {
+					max-width: calc(100% - 2em);
+					margin: auto;
 				}
 				.toc {
 					position: static;
@@ -163,12 +171,16 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [] } = Astro
 						)}
 						<hr />
 					</div>
-					<slot />
-					</div>
-					<aside class="toc" hidden>
+					<div class="article-layout">
+						<aside class="toc" hidden>
 						<h2>On this Page</h2>
 						<nav aria-label="目次" id="table-of-contents"></nav>
-					</aside>
+						</aside>
+						<div class="article-body">
+							<slot />
+						</div>
+					</div>
+					</div>
 				</div>
 			</article>
 		</main>
