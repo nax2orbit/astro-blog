@@ -5,7 +5,6 @@ const token = import.meta.env.GH_CONTRIBUTIONS_TOKEN;
 type ContributionDay = {
 	contributionCount: number;
 	date: string;
-	color: string;
 };
 
 type ContributionCalendar = {
@@ -34,7 +33,7 @@ if (token) {
 							contributionsCollection(from: $from, to: $to) {
 								contributionCalendar {
 									totalContributions
-									weeks { contributionDays { contributionCount date color } }
+									weeks { contributionDays { contributionCount date } }
 								}
 							}
 						}
@@ -49,6 +48,22 @@ if (token) {
 		calendar = undefined;
 	}
 }
+
+let previousMonth = -1;
+const monthLabels = calendar?.weeks.map((week) => {
+	const month = new Date(week.contributionDays[0]?.date).getMonth();
+	const label = month !== previousMonth ? new Date(week.contributionDays[0]?.date).toLocaleDateString('en-US', { month: 'short' }) : '';
+	previousMonth = month;
+	return label;
+}) || [];
+
+const contributionLevel = (count: number) => {
+	if (count === 0) return 0;
+	if (count <= 2) return 1;
+	if (count <= 5) return 2;
+	if (count <= 9) return 3;
+	return 4;
+};
 ---
 
 {
@@ -60,23 +75,32 @@ if (token) {
 					{calendar.totalContributions} contributions in the last year
 				</a>
 			</div>
-			<div class="calendar" aria-label={`GitHub contribution calendar for ${username}`}>
-				{calendar.weeks.flatMap((week) =>
-					week.contributionDays.map((day) => (
-						<span
-							class="day"
-							style={`background-color: ${day.contributionCount > 0 ? day.color : 'rgba(96, 115, 159, 0.15)'}`}
-							title={`${day.date}: ${day.contributionCount} contributions`}
-						></span>
-					)),
-				)}
+			<div class="calendar-layout">
+				<div class="weekdays" aria-hidden="true">
+					<span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+				</div>
+				<div class="calendar-scroll">
+					<div class="months" aria-hidden="true">
+						{monthLabels.map((label) => <span>{label}</span>)}
+					</div>
+					<div class="days" aria-label={`GitHub contribution calendar for ${username}`}>
+						{calendar.weeks.flatMap((week) =>
+							week.contributionDays.map((day) => (
+								<span
+									class={`day level-${contributionLevel(day.contributionCount)}`}
+									title={`${day.date}: ${day.contributionCount} contributions`}
+								></span>
+							)),
+						)}
+					</div>
+				</div>
 			</div>
 		</section>
 	)
 }
 
 <script>
-	const calendar = document.querySelector<HTMLElement>('.calendar');
+	const calendar = document.querySelector<HTMLElement>('.calendar-scroll');
 	if (calendar) {
 		requestAnimationFrame(() => {
 			calendar.scrollLeft = calendar.scrollWidth;
@@ -103,20 +127,60 @@ if (token) {
 		font-size: 0.75rem;
 		text-decoration: none;
 	}
-	.calendar {
+	.calendar-layout {
+		display: flex;
+		align-items: end;
+		gap: 0.45rem;
+	}
+	.calendar-scroll {
+		overflow-x: auto;
+		padding-bottom: 0.4rem;
+	}
+	.months,
+	.days {
+		width: max-content;
+		min-width: 860px;
+	}
+	.months {
+		display: grid;
+		grid-template-columns: repeat(53, 12px);
+		gap: 4px;
+		margin-bottom: 0.35rem;
+		color: rgb(var(--gray));
+		font-size: 0.65rem;
+		line-height: 1;
+	}
+	.months span {
+		width: 32px;
+		white-space: nowrap;
+	}
+	.weekdays {
+		display: grid;
+		grid-template-rows: repeat(7, 12px);
+		gap: 4px;
+		width: 26px;
+		color: rgb(var(--gray));
+		font-size: 0.55rem;
+		line-height: 12px;
+		margin-bottom: 0.4rem;
+	}
+	.days {
 		display: grid;
 		grid-template-rows: repeat(7, 12px);
 		grid-auto-flow: column;
 		grid-auto-columns: 12px;
 		gap: 4px;
-		overflow-x: auto;
-		padding-bottom: 0.4rem;
 	}
 	.day {
 		width: 12px;
 		height: 12px;
 		border-radius: 3px;
 	}
+	.level-0 { background: rgba(96, 115, 159, 0.15); }
+	.level-1 { background: rgba(179, 147, 236, 0.35); }
+	.level-2 { background: rgb(179, 147, 236); }
+	.level-3 { background: rgb(122, 69, 246); }
+	.level-4 { background: rgb(91, 33, 182); }
 	@media (max-width: 720px) {
 		.contributions-heading {
 			align-items: flex-start;
