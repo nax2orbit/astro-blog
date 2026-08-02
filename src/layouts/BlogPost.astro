@@ -56,6 +56,22 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [] } = Astro
 			.article-body :global(h3) {
 				font-size: 1.2em;
 			}
+			:global(.article-body h1)::before,
+			:global(.article-body h2)::before,
+			:global(.article-body h3)::before,
+			:global(.article-body h4)::before,
+			:global(.article-body h5)::before,
+			:global(.article-body h6)::before {
+				margin-right: 0.25em;
+				color: rgb(179, 147, 236);
+				font-weight: 400;
+			}
+			:global(.article-body h1)::before { content: '#'; }
+			:global(.article-body h2)::before { content: '##'; }
+			:global(.article-body h3)::before { content: '###'; }
+			:global(.article-body h4)::before { content: '####'; }
+			:global(.article-body h5)::before { content: '#####'; }
+			:global(.article-body h6)::before { content: '######'; }
 			.article-body :global(li > ul),
 			.article-body :global(li > ol) {
 				margin-top: 0.2rem;
