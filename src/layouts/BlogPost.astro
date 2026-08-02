@@ -29,12 +29,67 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [] } = Astro
 				border-radius: 12px;
 				box-shadow: var(--box-shadow);
 			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
+			.content-area {
+				display: grid;
+				grid-template-columns: minmax(0, 720px) 200px;
+				gap: 2rem;
+				align-items: start;
+				max-width: 960px;
 				margin: auto;
+			}
+			.prose {
+				width: auto;
+				max-width: calc(100% - 2em);
+				margin: 0;
 				padding: 1em;
 				color: rgb(var(--gray-dark));
+			}
+			.toc {
+				position: sticky;
+				top: 1.5rem;
+				margin-top: 2rem;
+				padding: 1rem;
+				border-left: 1px solid rgb(var(--gray-light));
+			}
+			.toc h2 {
+				margin-bottom: 0.65rem;
+				font-size: 1rem;
+			}
+			.toc nav {
+				display: grid;
+				gap: 0.35rem;
+			}
+			:global(.toc a) {
+				position: relative;
+				color: rgb(var(--gray));
+				font-size: 0.82rem;
+				line-height: 1.4;
+				text-decoration: none;
+				transition: color 0.2s ease;
+			}
+			:global(.toc a::before) {
+				position: absolute;
+				left: -1.05rem;
+				top: 0;
+				width: 2px;
+				height: 100%;
+				border-radius: 999px;
+				background: var(--accent);
+				content: '';
+				transform: scaleY(0);
+				transition: transform 0.2s ease;
+			}
+			:global(.toc a:hover),
+			:global(.toc a.is-active) {
+				color: rgb(var(--accent));
+			}
+			:global(.toc a:hover::before),
+			:global(.toc a.is-active::before) {
+				transform: scaleY(1);
+			}
+			:global(.toc a.toc-subitem) {
+				padding-left: 0.75rem;
+				font-size: 0.75rem;
 			}
 			.title {
 				margin-bottom: 1em;
@@ -66,6 +121,17 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [] } = Astro
 				color: rgb(122, 69, 246);
 				font-size: 0.75rem;
 			}
+			@media (max-width: 900px) {
+				.content-area {
+					display: block;
+				}
+				.toc {
+					position: static;
+					max-width: 720px;
+					margin: 0 auto 1rem;
+					border: 1px solid rgb(var(--gray-light));
+				}
+			}
 		</style>
 	</head>
 
@@ -76,7 +142,8 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [] } = Astro
 				<div class="hero-image">
 					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
 				</div>
-				<div class="prose">
+				<div class="content-area">
+					<div class="prose">
 					<div class="title">
 						<div class="date">
 							<FormattedDate date={pubDate} />
@@ -97,9 +164,64 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [] } = Astro
 						<hr />
 					</div>
 					<slot />
+					</div>
+					<aside class="toc" hidden>
+						<h2>On this Page</h2>
+						<nav aria-label="目次" id="table-of-contents"></nav>
+					</aside>
 				</div>
 			</article>
 		</main>
 		<Footer />
+		<script>
+			const toc = document.querySelector('.toc');
+			const tocNav = document.querySelector('#table-of-contents');
+			const headings = document.querySelectorAll('.prose h2, .prose h3');
+
+			if (toc && tocNav && headings.length > 0) {
+				const usedIds = new Set();
+				headings.forEach((heading, index) => {
+					const baseId = heading.textContent?.trim().toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-') || `heading-${index}`;
+					let id = baseId;
+					let suffix = 1;
+					while (usedIds.has(id)) id = `${baseId}-${suffix++}`;
+					usedIds.add(id);
+					heading.id = id;
+
+					const link = document.createElement('a');
+					link.href = `#${id}`;
+					link.textContent = heading.textContent || '';
+						if (heading.tagName === 'H3') link.className = 'toc-subitem';
+						tocNav.appendChild(link);
+				});
+				const links = [...tocNav.querySelectorAll('a')];
+				let preserveClickedLink = false;
+				const updateActiveLink = () => {
+					if (preserveClickedLink) return;
+					let activeIndex = 0;
+					let closestDistance = Number.POSITIVE_INFINITY;
+					headings.forEach((heading, index) => {
+						const distance = Math.abs(heading.getBoundingClientRect().top - 120);
+						if (distance < closestDistance) {
+							closestDistance = distance;
+							activeIndex = index;
+						}
+					});
+					links.forEach((link, index) => link.classList.toggle('is-active', index === activeIndex));
+				};
+				links.forEach((link, index) => {
+					link.addEventListener('click', () => {
+						preserveClickedLink = true;
+						links.forEach((item, linkIndex) => item.classList.toggle('is-active', linkIndex === index));
+						window.setTimeout(() => {
+							preserveClickedLink = false;
+						}, 700);
+					});
+				});
+				window.addEventListener('scroll', updateActiveLink, { passive: true });
+				updateActiveLink();
+				toc.hidden = false;
+			}
+		</script>
 	</body>
 </html>
