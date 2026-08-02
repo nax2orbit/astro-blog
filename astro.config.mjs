@@ -7,6 +7,11 @@ import { defineConfig, fontProviders } from 'astro/config';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://example.com',
+	markdown: {
+		shikiConfig: {
+			theme: 'tokyo-night',
+		},
+	},
 	integrations: [mdx(), sitemap()],
 	fonts: [
 		{
