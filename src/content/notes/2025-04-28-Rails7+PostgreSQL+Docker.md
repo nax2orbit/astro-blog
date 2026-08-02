@@ -2,7 +2,8 @@
 title: Rails7+PostgreSQL+Docker
 pubDate: 2025-4-28
 author: nax2
-tags: ['Rails,PosgreSQL,Docker']
+tags: ['Rails', 'PostgreSQL', 'Docker']
+heroImage: '../../assets/blog-placeholder-3.jpg'
 ---
 # Rails7 API mode+PostgreSQL+Docker setup
 ## Prerequisites

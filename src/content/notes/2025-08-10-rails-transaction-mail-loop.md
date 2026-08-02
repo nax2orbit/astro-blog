@@ -3,6 +3,7 @@ title: Railsのtransaction内でメール送信を行ったらループ送信が
 pubDate: 2025-08-10
 author: nax2
 tags: ['Rails']
+heroImage: '../../assets/blog-placeholder-3.jpg'
 
 ---
 # Railsのtransaction内でメール送信を行ったらループ送信が発生した
@@ -50,4 +51,3 @@ obj.each { |arg|
   end
 end
 ```
-
