@@ -1,0 +1,18 @@
+name: Daily Cloudflare Deploy
+
+on:
+  schedule:
+    - cron: "0 5 * * *"
+      timezone: "Asia/Tokyo"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Cloudflare deployment
+        env:
+          DEPLOY_HOOK_URL: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK_URL }}
+        run: |
+          curl --fail --show-error --silent \
+            --request POST "$DEPLOY_HOOK_URL"
